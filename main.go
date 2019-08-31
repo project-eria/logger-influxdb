@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/project-eria/eria-base"
 	configmanager "github.com/project-eria/eria-base/config-manager"
-	"github.com/project-eria/eria-base/helpers"
+	"github.com/project-eria/xaal-go"
 	"github.com/project-eria/xaal-go/device"
-	"github.com/project-eria/xaal-go/engine"
 	"github.com/project-eria/xaal-go/message"
 
 	influxdb "github.com/influxdata/influxdb1-client/v2"
-	"github.com/project-eria/logger"
+	"github.com/project-eria/eria-logger"
 )
 
 var (
@@ -44,7 +44,7 @@ var _client influxdb.Client
 func main() {
 	defer os.Exit(0)
 
-	helpers.AddShowVersion(Version)
+	eria.AddShowVersion(Version)
 
 	logger.Module("main").Infof("Starting InfluxDB Logger %s...", Version)
 
@@ -67,20 +67,20 @@ func main() {
 	}
 	defer cm.Close()
 
-	// xAAL engine starting
-	helpers.InitEngine()
+	// Init xAAL engine
+	eria.InitEngine()
 
 	setup()
 	// Save for new Address during setup
 	cm.Save()
 
-	engine.AddRxHandler(parse)
+	xaal.AddRxHandler(parse)
 
 	// Launch the xAAL engine
-	go engine.Run()
-	defer engine.Stop()
+	go xaal.Run()
+	defer xaal.Stop()
 
-	helpers.WaitForExit()
+	eria.WaitForExit()
 }
 
 func setup() {
@@ -92,7 +92,7 @@ func setup() {
 		config.Addr = dev.Address
 	}
 	setupDev(dev)
-	engine.AddDevice(dev)
+	xaal.AddDevice(dev)
 	// InfluxDB
 	// Create a new HTTPClient
 	_client, err = influxdb.NewHTTPClient(influxdb.HTTPConfig{
