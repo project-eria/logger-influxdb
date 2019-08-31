@@ -11,7 +11,7 @@ import (
 	"github.com/project-eria/xaal-go/message"
 
 	influxdb "github.com/influxdata/influxdb1-client/v2"
-	"github.com/project-eria/eria-logger"
+	logger "github.com/project-eria/eria-logger"
 )
 
 var (
